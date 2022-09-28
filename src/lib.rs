@@ -1,17 +1,22 @@
 use std::{fmt::Debug, thread};
 
 pub struct ThreadPool {
-  threads: Vec<thread::JoinHandle<()>>,
+  workers: Vec<Worker>,
 }
 
-pub struct PoolCreationError;
+struct Worker {
+  id: usize,
+  thread: thread::JoinHandle<()>,
+}
 
 impl ThreadPool {
   pub fn new(size: usize) -> Result<ThreadPool, PoolCreationError> {
     if size > 0 {
-      let threads = Vec::with_capacity(size);
-      for _ in 0..size {}
-      Ok(ThreadPool { threads })
+      let mut workers = Vec::with_capacity(size);
+      for index in 0..size {
+        workers.push(Worker::new(index));
+      }
+      Ok(ThreadPool { workers })
     } else {
       Err(PoolCreationError)
     }
@@ -31,7 +36,16 @@ impl ThreadPool {
   // }
 }
 
+impl Worker {
+  fn new(id: usize) -> Worker {
+    let thread = thread::spawn(|| {});
+    Worker { id, thread }
+  }
+}
+
 use std::fmt;
+
+pub struct PoolCreationError;
 
 impl Debug for PoolCreationError {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
