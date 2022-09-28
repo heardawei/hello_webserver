@@ -1,3 +1,4 @@
+use hello_webserver::ThreadPool;
 use std::fs;
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
@@ -6,9 +7,10 @@ use std::time::Duration;
 
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:7878").unwrap();
+    let pool = ThreadPool::new(4);
     for stream in listener.incoming() {
         let stream = stream.unwrap();
-        handle_connection(stream);
+        pool.execute(move || handle_connection(stream));
     }
 }
 
