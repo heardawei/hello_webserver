@@ -1,6 +1,5 @@
 use std::{
   fmt,
-  process::Termination,
   sync::{mpsc, Arc, Mutex},
   thread,
 };
